@@ -18,30 +18,37 @@ public class RestRelationshipIndex extends RestIndex<Relationship> implements Re
         super( restRequest, indexName, restGraphDatabase );
     }
 
+    @Override
     public Class<Relationship> getEntityType() {
         return Relationship.class;
     }
 
+    @Override
     public void remove(Relationship entity, String key) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void remove(Relationship entity) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected Relationship createEntity( Map<?, ?> item ) {
         return new RestRelationship( (Map<?, ?>) item, restGraphDatabase );
     }
 
+    @Override
     public org.neo4j.graphdb.index.IndexHits<Relationship> get( String s, Object o, Node node, Node node1 ) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public org.neo4j.graphdb.index.IndexHits<Relationship> query( String s, Object o, Node node, Node node1 ) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public org.neo4j.graphdb.index.IndexHits<Relationship> query( Object o, Node node, Node node1 ) {
         throw new UnsupportedOperationException();
     }

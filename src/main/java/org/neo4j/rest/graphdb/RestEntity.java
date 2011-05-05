@@ -1,6 +1,6 @@
 package org.neo4j.rest.graphdb;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.jboss.resteasy.client.ClientResponse;
 import org.neo4j.graphdb.NotFoundException;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.helpers.collection.IterableWrapper;
@@ -67,6 +67,7 @@ public class RestEntity implements PropertyContainer {
         return System.currentTimeMillis() - since > isItGreaterThanThis;
     }
 
+    @Override
     public Object getProperty( String key ) {
         Object value = getPropertyValue( key );
         if ( value == null ) {
@@ -91,12 +92,14 @@ public class RestEntity implements PropertyContainer {
         return PropertiesMap.assertSupportedPropertyValue( value );
     }
 
+    @Override
     public Object getProperty( String key, Object defaultValue ) {
         Object value = getPropertyValue( key );
         return value != null ? value : defaultValue;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Iterable<String> getPropertyKeys() {
         return new IterableWrapper( getPropertyData().keySet() ) {
             @Override
@@ -107,14 +110,17 @@ public class RestEntity implements PropertyContainer {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Iterable<Object> getPropertyValues() {
         return (Iterable<Object>) getPropertyData().values();
     }
 
+    @Override
     public boolean hasProperty( String key ) {
         return getPropertyData().containsKey( key );
     }
 
+    @Override
     public Object removeProperty( String key ) {
         Object value = getProperty( key, null );
         restRequest.delete( "properties/" + key );
@@ -122,6 +128,7 @@ public class RestEntity implements PropertyContainer {
         return value;
     }
 
+    @Override
     public void setProperty( String key, Object value ) {
         restRequest.put( "properties/" + key, JsonHelper.createJsonFrom( value ) );
         invalidatePropertyData();
@@ -154,6 +161,7 @@ public class RestEntity implements PropertyContainer {
         return getClass().equals( o.getClass() ) && getId() == ( (RestEntity) o ).getId();
     }
 
+    @Override
     public RestGraphDatabase getGraphDatabase() {
         return graphDatabase;
     }

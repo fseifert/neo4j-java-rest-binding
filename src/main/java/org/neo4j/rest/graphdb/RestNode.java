@@ -1,8 +1,6 @@
 package org.neo4j.rest.graphdb;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import org.jboss.resteasy.client.ClientResponse;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 import org.neo4j.helpers.collection.IterableWrapper;
@@ -27,6 +25,7 @@ public class RestNode extends RestEntity implements Node {
         super( data, graphDatabase );
     }
 
+    @Override
     public Relationship createRelationshipTo( Node toNode, RelationshipType type ) {
         Map<String, Object> data = MapUtil.map( "to", ( (RestNode) toNode ).getUri(),
                 "type", type.name() );
@@ -35,9 +34,10 @@ public class RestNode extends RestEntity implements Node {
         if ( restRequest.statusOtherThan( response, Status.CREATED ) ) {
             throw new RuntimeException( "" + response.getStatus() );
         }
-        return new RestRelationship( response.getLocation(), getGraphDatabase() );
+        return new RestRelationship( response.getLocation().getHref(), getGraphDatabase() );
     }
 
+    @Override
     public Iterable<Relationship> getRelationships() {
         return wrapRelationships( restRequest.get( "relationships/all" ) );
     }
@@ -53,6 +53,7 @@ public class RestNode extends RestEntity implements Node {
         };
     }
 
+    @Override
     public Iterable<Relationship> getRelationships( RelationshipType... types ) {
         String path = getStructuralData().get( "all_relationships" ) + "/";
         int counter = 0;
@@ -89,10 +90,12 @@ public class RestNode extends RestEntity implements Node {
         }
     }
 
+    @Override
     public Iterable<Relationship> getRelationships( Direction direction ) {
         return wrapRelationships( restRequest.get( "relationships/" + RestDirection.from( direction ).pathName ) );
     }
 
+    @Override
     public Iterable<Relationship> getRelationships( RelationshipType type,
                                                     Direction direction ) {
         String relationshipsKey = RestDirection.from( direction ).dataName + "_relationships";
@@ -100,37 +103,45 @@ public class RestNode extends RestEntity implements Node {
         return wrapRelationships( restRequest.get( relationship + "/" + type.name() ) );
     }
 
+    @Override
     public Relationship getSingleRelationship( RelationshipType type,
                                                Direction direction ) {
         return IteratorUtil.singleOrNull( getRelationships( type, direction ) );
     }
 
+    @Override
     public boolean hasRelationship() {
         return getRelationships().iterator().hasNext();
     }
 
+    @Override
     public boolean hasRelationship( RelationshipType... types ) {
         return getRelationships( types ).iterator().hasNext();
     }
 
+    @Override
     public boolean hasRelationship( Direction direction ) {
         return getRelationships( direction ).iterator().hasNext();
     }
 
+    @Override
     public boolean hasRelationship( RelationshipType type, Direction direction ) {
         return getRelationships( type, direction ).iterator().hasNext();
     }
 
+    @Override
     public Traverser traverse( Order order, StopEvaluator stopEvaluator,
                                ReturnableEvaluator returnableEvaluator, Object... rels ) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Traverser traverse( Order order, StopEvaluator stopEvaluator,
                                ReturnableEvaluator returnableEvaluator, RelationshipType type, Direction direction ) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Traverser traverse( Order order, StopEvaluator stopEvaluator,
                                ReturnableEvaluator returnableEvaluator, RelationshipType type, Direction direction,
                                RelationshipType secondType, Direction secondDirection ) {

@@ -1,6 +1,6 @@
 package org.neo4j.rest.graphdb;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.jboss.resteasy.client.ClientResponse;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.traversal.*;
 import org.neo4j.graphdb.traversal.Traverser;
@@ -26,10 +26,12 @@ public class RestTraversal implements RestTraversalDescription {
         return description.toString();
     }
 
+    @Override
     public TraversalDescription uniqueness(UniquenessFactory uniquenessFactory) {
         return uniqueness(uniquenessFactory,null);
     }
 
+    @Override
     public TraversalDescription uniqueness(UniquenessFactory uniquenessFactory, Object value) {
         String uniqueness = restify(uniquenessFactory);
         add("uniqueness",value==null ? uniqueness : toMap("name",uniqueness, "value", value));
@@ -43,6 +45,7 @@ public class RestTraversal implements RestTraversalDescription {
         throw new UnsupportedOperationException("Only values of "+Uniqueness.class+" are supported");
     }
 
+    @Override
     public TraversalDescription prune(PruneEvaluator pruneEvaluator) {
         Integer maxDepth= getMaxDepthValueOrNull(pruneEvaluator);
         if (maxDepth!=null) {
@@ -61,36 +64,44 @@ public class RestTraversal implements RestTraversalDescription {
         }
     }
 
+    @Override
     public TraversalDescription filter(Predicate<Path> pathPredicate) {
         if (pathPredicate == Traversal.returnAll()) return add("return filter",toMap("language","builtin", "name","all"));
         if (pathPredicate == Traversal.returnAllButStartNode()) return add("return filter",toMap("language","builtin", "name","all but start node"));
         throw new UnsupportedOperationException("Only builtin paths supported");
     }
 
+    @Override
     public TraversalDescription evaluator(Evaluator evaluator) {
         return null;
     }
 
+    @Override
     public TraversalDescription prune(ScriptLanguage language, String code) {
         return add("prune evaluator",toMap("language",language.name().toLowerCase(),"body",code ));
     }
 
+    @Override
     public TraversalDescription filter(ScriptLanguage language, String code) {
         return add("return filter",toMap("language",language.name().toLowerCase(),"body",code ));
     }
 
+    @Override
     public TraversalDescription maxDepth(int depth) {
         return add("max depth",depth);
     }
 
+    @Override
     public TraversalDescription order(BranchOrderingPolicy branchOrderingPolicy) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public TraversalDescription depthFirst() {
         return add("order","depth first");
     }
 
+    @Override
     public TraversalDescription breadthFirst() {
         return add("order", "breadth first");
     }
@@ -100,10 +111,12 @@ public class RestTraversal implements RestTraversalDescription {
         return this;
     }
 
+    @Override
     public TraversalDescription relationships(RelationshipType relationshipType) {
         return relationships(relationshipType, null);
     }
 
+    @Override
     public TraversalDescription relationships(RelationshipType relationshipType, Direction direction) {
         if (!description.containsKey("relationships")) {
             description.put("relationships",new HashSet<Map<String,Object>>());
@@ -130,10 +143,12 @@ public class RestTraversal implements RestTraversalDescription {
         return null;
     }
 
+    @Override
     public TraversalDescription expand(RelationshipExpander relationshipExpander) {
         return null;
     }
 
+    @Override
     public Traverser traverse(Node node) {
         final RestNode restNode = (RestNode) node;
         final RestRequest request = restNode.getRestRequest();

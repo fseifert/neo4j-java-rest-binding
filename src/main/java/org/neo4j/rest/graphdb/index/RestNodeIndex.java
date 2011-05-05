@@ -16,18 +16,22 @@ public class RestNodeIndex extends RestIndex<Node> {
         super( restRequest, indexName, restGraphDatabase );
     }
 
+    @Override
     public Class<Node> getEntityType() {
         return Node.class;
     }
 
+    @Override
     public void remove(Node entity, String key) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void remove(Node entity) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected Node createEntity(Map<?, ?> item) {
         return new RestNode((Map<?, ?>) item, restGraphDatabase);
     }

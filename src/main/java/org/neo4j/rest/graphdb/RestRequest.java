@@ -1,10 +1,6 @@
 package org.neo4j.rest.graphdb;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import org.jboss.resteasy.client.ClientResponse;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,10 +9,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Map;
+import org.jboss.resteasy.client.ClientRequestFactory;
 
 public class RestRequest {
     private final URI baseUri;
-    private final Client client;
+    private final ClientRequestFactory client;
 
     public RestRequest( URI baseUri ) {
         this( baseUri, null, null );
@@ -24,12 +21,12 @@ public class RestRequest {
 
     public RestRequest( URI baseUri, String username, String password ) {
         this.baseUri = uriWithoutSlash( baseUri );
-        client = Client.create();
-        if ( username != null ) client.addFilter( new HTTPBasicAuthFilter( username, password ) );
+        client = new ClientRequestFactory(this.baseUri);
+        //if ( username != null ) client.addFilter( new HTTPBasicAuthFilter( username, password ) );
 
     }
 
-    private RestRequest( URI uri, Client client ) {
+    private RestRequest( URI uri, ClientRequestFactory client ) {
         this.baseUri = uriWithoutSlash( uri );
         this.client = client;
     }
@@ -49,10 +46,10 @@ public class RestRequest {
     }
 
 
-    private Builder builder( String path ) {
+    /*private Builder builder( String path ) {
         WebResource resource = client.resource( uri( pathOrAbsolute( path ) ) );
         return resource.accept( MediaType.APPLICATION_JSON_TYPE );
-    }
+    }*/
 
     private String pathOrAbsolute( String path ) {
         if ( path.startsWith( "http://" ) ) return path;
@@ -60,27 +57,67 @@ public class RestRequest {
     }
 
     public ClientResponse get( String path ) {
-        return builder( path ).get( ClientResponse.class );
+        ClientResponse response = null;
+        try {
+            response = client.createRequest(pathOrAbsolute(path)).get();
+        } catch (Exception e)
+        {
+            
+        }
+        
+        return response;
+        //return builder( path ).get( ClientResponse.class );
     }
 
     public ClientResponse delete( String path ) {
-        return builder( path ).delete( ClientResponse.class );
+        ClientResponse response = null;
+        try {
+            response = client.createRequest(pathOrAbsolute(path)).delete();
+        } catch (Exception e)
+        {
+            
+        }
+        
+        return response;
+        //return builder( path ).delete( ClientResponse.class );
     }
 
     public ClientResponse post( String path, String data ) {
-        Builder builder = builder( path );
+        ClientResponse response = null;
+        try {
+            if(data!=null)
+                response = client.createRequest(pathOrAbsolute(path)).body(MediaType.APPLICATION_JSON_TYPE, data).post();
+            else response = client.createRequest(pathOrAbsolute(path)).post();
+        } catch (Exception e)
+        {
+            
+        }
+        
+        return response;
+/*        Builder builder = builder( path );
         if ( data != null ) {
             builder = builder.entity( data, MediaType.APPLICATION_JSON_TYPE );
         }
-        return builder.post( ClientResponse.class );
+        return builder.post( ClientResponse.class );*/
     }
 
     public ClientResponse put( String path, String data ) {
-        Builder builder = builder( path );
+        ClientResponse response = null;
+        try {
+            if(data!=null)
+                response = client.createRequest(pathOrAbsolute(path)).body(MediaType.APPLICATION_JSON_TYPE, data).put();
+            else response = client.createRequest(pathOrAbsolute(path)).put();
+        } catch (Exception e)
+        {
+            
+        }
+        
+        return response;
+        /*Builder builder = builder( path );
         if ( data != null ) {
             builder = builder.entity( data, MediaType.APPLICATION_JSON_TYPE );
         }
-        return builder.put( ClientResponse.class );
+        return builder.put( ClientResponse.class );*/
     }
 
 
@@ -93,7 +130,9 @@ public class RestRequest {
     }
 
     private String entityString( ClientResponse response ) {
-        return response.getEntity( String.class );
+        Object entity = response.getEntity(String.class);
+        return entity.toString();
+        //return response.getEntity( String.class );
     }
 
     public boolean statusIs( ClientResponse response, Response.StatusType status ) {
@@ -105,7 +144,7 @@ public class RestRequest {
     }
 
     public RestRequest with( String uri ) {
-        return new RestRequest( uri( uri ), client );
+        return new RestRequest( uri( uri ));
     }
 
     private URI uri( String uri ) {

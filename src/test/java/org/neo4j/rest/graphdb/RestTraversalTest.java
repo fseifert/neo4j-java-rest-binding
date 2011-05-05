@@ -3,7 +3,6 @@ package org.neo4j.rest.graphdb;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.Uniqueness;
 
 import java.util.Map;

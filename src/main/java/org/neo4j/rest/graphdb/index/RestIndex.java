@@ -1,6 +1,6 @@
 package org.neo4j.rest.graphdb.index;
 
-import com.sun.jersey.api.client.ClientResponse;
+import org.jboss.resteasy.client.ClientResponse;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
@@ -8,7 +8,6 @@ import org.neo4j.rest.graphdb.JsonHelper;
 import org.neo4j.rest.graphdb.RestEntity;
 import org.neo4j.rest.graphdb.RestGraphDatabase;
 import org.neo4j.rest.graphdb.RestRequest;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -31,6 +30,7 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
         this.restGraphDatabase = restGraphDatabase;
     }
 
+    @Override
     public String getName() {
         return indexName;
     }
@@ -39,6 +39,7 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
         return getEntityType().getSimpleName().toLowerCase();
     }
 
+    @Override
     public void add( T entity, String key, Object value ) {
         String uri = ( (RestEntity) entity ).getUri();
         restRequest.post( indexPath( key, value ), JsonHelper.createJsonFrom( uri ) );
@@ -48,27 +49,33 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
         return "index/" + getTypeName() + "/" + indexName + "/" + RestRequest.encode( key ) + "/" + RestRequest.encode( value );
     }
 
+    @Override
     public void remove( T entity, String key, Object value ) {
         restRequest.delete( indexPath( key, value ) + "/" + ( (RestEntity) entity ).getId() );
 
     }
 
+    @Override
     public void remove(T entity, String key) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public void remove(T entity) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public void delete() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
+    @Override
     public org.neo4j.graphdb.index.IndexHits<T> get( String key, Object value ) {
         return query( key, value );
     }
 
+    @Override
     public IndexHits<T> query( String key, Object value ) {
         ClientResponse response = restRequest.get( indexPath( key, value ) );
         if ( restRequest.statusIs( response, Response.Status.OK ) ) {
@@ -81,6 +88,7 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
 
     protected abstract T createEntity( Map<?, ?> item );
 
+    @Override
     public org.neo4j.graphdb.index.IndexHits<T> query( Object value ) {
         throw new UnsupportedOperationException();
     }
@@ -96,31 +104,38 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
             this.size = size;
         }
 
+        @Override
         public int size() {
             return size;
         }
 
+        @Override
         public void close() {
 
         }
 
+        @Override
         public T getSingle() {
             Iterator<Object> it = hits.iterator();
             return it.hasNext() ? transform( it.next() ) : null;
         }
 
+        @Override
         public float currentScore() {
             return 0;
         }
 
+        @Override
         public Iterator<T> iterator() {
             return this;
         }
 
+        @Override
         public boolean hasNext() {
             return iterator.hasNext();
         }
 
+        @Override
         public T next() {
             Object value = iterator.next();
             return transform( value );
@@ -130,6 +145,7 @@ public abstract class RestIndex<T extends PropertyContainer> implements Index<T>
             return (T) createEntity( (Map<?, ?>) value );
         }
 
+        @Override
         public void remove() {
 
         }

@@ -28,41 +28,50 @@ public class SimplePath implements Path {
         this.relationships = relationships;
     }
 
+    @Override
     public Node startNode() {
         return startNode;
     }
 
+    @Override
     public Node endNode() {
         return endNode;
     }
 
+    @Override
     public Relationship lastRelationship() {
         return lastRelationship;
     }
 
+    @Override
     public Iterable<Relationship> relationships() {
         return relationships;
     }
 
+    @Override
     public Iterable<Node> nodes() {
         return nodes;
     }
 
+    @Override
     public int length() {
         return length;
     }
 
+    @Override
     public Iterator<PropertyContainer> iterator() {
         return new Iterator<PropertyContainer>()
         {
             Iterator<? extends PropertyContainer> current = nodes().iterator();
             Iterator<? extends PropertyContainer> next = relationships().iterator();
 
+            @Override
             public boolean hasNext()
             {
                 return current.hasNext();
             }
 
+            @Override
             public PropertyContainer next()
             {
                 try
@@ -77,6 +86,7 @@ public class SimplePath implements Path {
                 }
             }
 
+            @Override
             public void remove()
             {
                 next.remove();

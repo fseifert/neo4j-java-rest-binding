@@ -2,7 +2,6 @@ package org.neo4j.rest.graphdb;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.index.Index;
@@ -10,7 +9,6 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.RelationshipIndex;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class RestIndexTest extends RestTestBase {
 

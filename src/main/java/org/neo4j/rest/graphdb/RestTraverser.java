@@ -30,6 +30,7 @@ public class RestTraverser implements Traverser {
         return result;
     }
 
+    @Override
     public Iterable<Node> nodes() {
         return new IterableWrapper<Node, Path>(paths) {
             @Override
@@ -39,6 +40,7 @@ public class RestTraverser implements Traverser {
         };
     }
 
+    @Override
     public Iterable<Relationship> relationships() {
         return new IterableWrapper<Relationship, Path>(paths) {
             @Override
@@ -48,6 +50,7 @@ public class RestTraverser implements Traverser {
         };
     }
 
+    @Override
     public Iterator<Path> iterator() {
         return paths.iterator();
     }

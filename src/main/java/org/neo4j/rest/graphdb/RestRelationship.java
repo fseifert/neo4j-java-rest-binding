@@ -19,10 +19,12 @@ public class RestRelationship extends RestEntity implements Relationship {
         super( data, graphDatabase );
     }
 
+    @Override
     public Node getEndNode() {
         return node( (String) getStructuralData().get( "end" ) );
     }
 
+    @Override
     public Node[] getNodes() {
         return new Node[]{
                 node( (String) getStructuralData().get( "start" ) ),
@@ -30,6 +32,7 @@ public class RestRelationship extends RestEntity implements Relationship {
         };
     }
 
+    @Override
     public Node getOtherNode( Node node ) {
         long nodeId = node.getId();
         String startNodeUri = (String) getStructuralData().get( "start" );
@@ -47,14 +50,17 @@ public class RestRelationship extends RestEntity implements Relationship {
         return new RestNode( uri, getGraphDatabase() );
     }
 
+    @Override
     public Node getStartNode() {
         return node( (String) getStructuralData().get( "start" ) );
     }
 
+    @Override
     public RelationshipType getType() {
         return DynamicRelationshipType.withName( (String) getStructuralData().get( "type" ) );
     }
 
+    @Override
     public boolean isType( RelationshipType type ) {
         return type.name().equals( getStructuralData().get( "type" ) );
     }

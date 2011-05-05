@@ -30,6 +30,7 @@ class IsRelationshipToNodeMatcher extends TypeSafeMatcher<Iterable<Relationship>
         return null;
     }
 
+    @Override
     public void describeTo( Description description ) {
         description.appendValue( startNode ).appendText( " to " ).appendValue( endNode ).appendText( "not contained in relationships" );
     }
